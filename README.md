@@ -31,6 +31,7 @@ Electronic hobbyists, makers, and engineering students need low-cost and effecti
   | Xilinx | Artix-7 | xc7a35tcpg236-1 | 100MHz | 4.098 | 200 | 240 | 16 | 4096
   | Altera | Cyclone IV | EP4CE10F17C8N | 50MHz | 10.729 | 404 | 238 | 8 | 8192
   | Lattice | iCE40 | LP8K | 16MHz | x | 665 | 234 | 8 | 8192
+  | Cologne Chip | GateMate | A1 | 50-100MHz | x | 397 | 393 | 8 | 4096
   
 ---
 ## Installation
@@ -41,6 +42,7 @@ Electronic hobbyists, makers, and engineering students need low-cost and effecti
   * Xilinx -> Vivado
   * Altera -> Quartus Prime
   * Lattice -> icestudio or Icecube2
+  * Cologne Chip -> Yosys and CC-PR
 ---
 ## Run
 * Launch the GUI by running:
