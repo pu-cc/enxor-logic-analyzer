@@ -1,8 +1,8 @@
 {
 	"baud_rate" : 115200,
-	"port_name" : "COM13",
-	"clk_freq" : 100000000,
-	"mem_depth" : 8192,
+	"port_name" : "/dev/ttyUSB2",
+	"clk_freq" : 50000000,
+	"mem_depth" : 4096,
 	"precap_size" : 1024,
 	"sample_rate" : 238,
 	"trig_channel" : 0,

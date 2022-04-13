@@ -1,0 +1,18 @@
+## demo_top.ccf
+
+Pin_in     "i_sys_clk"        Loc = "IO_SB_A8" | SCHMITT_TRIGGER=true; # 10 MHz reference clock
+Pin_in     "i_rstn"           Loc = "IO_NB_B0" | SCHMITT_TRIGGER=true;
+
+Pin_out    "o_tx"             Loc = "IO_NB_B5"; # Pmod B: IO D4
+Pin_in     "i_rx"             Loc = "IO_NB_B6"; # Pmod B: IO D5
+
+Pin_out    "RGB[0]"           Loc = "IO_EB_B1"; # D1
+Pin_out    "RGB[1]"           Loc = "IO_EB_B2"; # D2
+Pin_out    "RGB[2]"           Loc = "IO_EB_B3"; # D3
+
+Pin_out    "o_triggered_led"  Loc = "IO_EB_B7"; # D7
+Pin_out    "o_enabled"        Loc = "IO_EB_B8"; # D8
+
+Pin_out    "CS"               Loc = "IO_EA_A0";
+Pin_out    "SCLK"             Loc = "IO_EA_A1";
+Pin_in     "MISO"             Loc = "IO_EA_A2";

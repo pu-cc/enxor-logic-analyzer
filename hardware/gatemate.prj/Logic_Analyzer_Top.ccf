@@ -1,0 +1,19 @@
+## Logic_Analyzer_Top.ccf
+
+Pin_in     "i_ref_clk"        Loc = "IO_SB_A8" | SCHMITT_TRIGGER=true; # 10 MHz reference clock
+Pin_in     "i_rstn"           Loc = "IO_NB_B0" | SCHMITT_TRIGGER=true;
+
+Pin_out    "o_tx"             Loc = "IO_NB_B5"; # Pmod B: IO D4
+Pin_in     "i_rx"             Loc = "IO_NB_B6"; # Pmod B: IO D5
+
+Pin_in     "i_raw_sig[0]"     Loc = "IO_EA_A0";
+Pin_in     "i_raw_sig[1]"     Loc = "IO_EA_A1";
+Pin_in     "i_raw_sig[2]"     Loc = "IO_EA_A2";
+Pin_in     "i_raw_sig[3]"     Loc = "IO_EA_A3";
+Pin_in     "i_raw_sig[4]"     Loc = "IO_EA_A4";
+Pin_in     "i_raw_sig[5]"     Loc = "IO_EA_A5";
+Pin_in     "i_raw_sig[6]"     Loc = "IO_EA_A6";
+Pin_in     "i_raw_sig[7]"     Loc = "IO_EA_A7";
+
+Pin_out    "o_triggered_led"  Loc = "IO_EB_B7"; # D7
+Pin_out    "o_enabled"        Loc = "IO_EB_B8"; # D8
