@@ -20,8 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Mux #(parameter WIDTH = 8, NUM_INPUTS  = 16)(
-  input [NUM_INPUTS-1:0] [WIDTH-1:0] i_data,
+module Mux #(parameter WIDTH = 8, NUM_INPUTS  = 16, MUX_WIDTH=16)(
+  input [MUX_WIDTH-1:0] i_data,
   input [$clog2(NUM_INPUTS)-1:0] i_sel,
   output [WIDTH -1:0] o_data
 );

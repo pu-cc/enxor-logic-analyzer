@@ -50,28 +50,17 @@ module simpleSPI(
     reg t_rst;
     
     reg [2:0] state;
-    reg [3:0] bit;
+    reg [3:0] r_bit; // bit keyword invalid in systemverilog
     reg [31:0] t_count;
     reg [31:0] sclk_count;
-    
-    initial begin
-        state = 0;
-        timer = 0;
-        t_rst = 0;
-        bit = 0;
-        
-        t_count = 0;
-        sclk_count = 0;
-        
-        SCLK = 0;
-        CS = 1;
-        d = 0;
-        d_rdy = 0;
-    end
     
     //---------------------------
     // Clock Divider for SCLK:
     always @(posedge clk) begin
+      if (!rst) begin
+        sclk_count <= 0;
+        SCLK <= 0;
+      end else begin
         if (sclk_count > 25) begin
             SCLK <= ~SCLK;
             sclk_count <= 0;
@@ -79,6 +68,7 @@ module simpleSPI(
         else begin
             sclk_count <= sclk_count + 1;
         end
+      end
     end
     //---------------------------
     
@@ -106,6 +96,11 @@ module simpleSPI(
     always @(posedge SCLK) begin
         if (!rst) begin
             state <= RESET;
+            t_rst <= 0;
+            r_bit <= 0;
+            CS <= 1;
+            d <= 0;
+            d_rdy <= 0;
         end
         else begin
             case (state)
@@ -122,17 +117,17 @@ module simpleSPI(
                 WAIT: begin
                     if (timer & rd) begin
                         CS <= 0;
-                        bit <= 15;
+                        r_bit <= 15;
                         state <= READ_SPI;
                     end                
                 end
                 READ_SPI: begin
-                    if (bit > 0) begin
-                        d[bit] <= MISO;
-                        bit <= bit -1;
+                    if (r_bit > 0) begin
+                        d[r_bit] <= MISO;
+                        r_bit <= r_bit -1;
                     end
                     else begin
-                        d[bit] <= MISO;
+                        d[r_bit] <= MISO;
                         d_rdy <= 1;
                         CS <= 1;
                         state <= WAIT_ACK;

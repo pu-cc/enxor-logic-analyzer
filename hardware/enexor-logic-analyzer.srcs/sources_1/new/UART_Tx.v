@@ -13,6 +13,7 @@
   
 module uart_tx #(parameter CLKS_PER_BIT = 87) (
    input       i_sys_clk,
+   input       i_rst,
    input       i_Tx_DV,
    input [7:0] i_Tx_Byte,
    output reg  o_Tx_Serial,
@@ -25,15 +26,23 @@ module uart_tx #(parameter CLKS_PER_BIT = 87) (
   localparam s_TX_STOP_BIT  = 3'b011;
   localparam s_CLEANUP      = 3'b100;
    
-  reg [2:0]    r_SM_Main     = 0;
-  reg [9:0]    r_Clock_Count = 0;
-  reg [2:0]    r_Bit_Index   = 0;
-  reg [7:0]    r_Tx_Data     = 0;
-  reg          r_Tx_Done     = 0;
-  reg          r_Tx_Active   = 0;
+  reg [2:0]    r_SM_Main;
+  reg [9:0]    r_Clock_Count;
+  reg [2:0]    r_Bit_Index;
+  reg [7:0]    r_Tx_Data;
+  reg          r_Tx_Done;
+  reg          r_Tx_Active;
      
   always @(posedge i_sys_clk)
     begin
+      if (!i_rst) begin
+        r_SM_Main <= 0;
+        r_Clock_Count <= 0;
+        r_Bit_Index <= 0;
+        r_Tx_Data <= 0;
+        r_Tx_Done <= 0;
+        r_Tx_Active <= 0;
+      end else begin
        
       case (r_SM_Main)
         s_IDLE :
@@ -133,6 +142,7 @@ module uart_tx #(parameter CLKS_PER_BIT = 87) (
           r_SM_Main <= s_IDLE;
          
       endcase
+      end
     end
 
   assign o_Tx_Done   = r_Tx_Done;

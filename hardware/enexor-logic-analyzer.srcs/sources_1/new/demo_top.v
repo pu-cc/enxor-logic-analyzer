@@ -157,8 +157,9 @@ module demo_top #(parameter DATA_WIDTH = 8, parameter PACKET_WIDTH = 16, paramet
         .o_tx_byte(w_tx_byte)
     );
     
-    uart #(.CLKS_PER_BIT(104)) USB (
+    uart #(.CLKS_PER_BIT(87)) USB (
         .i_sys_clk(i_sys_clk),
+        .i_rst(w_rstn),
         .i_Rx_Serial(i_rx),
         .i_Tx_DV(w_tx_DV),
         .i_Tx_Byte(w_tx_byte),

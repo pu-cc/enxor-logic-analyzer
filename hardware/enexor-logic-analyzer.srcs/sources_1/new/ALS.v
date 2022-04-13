@@ -65,12 +65,11 @@ module ALS(
     
     assign led = d[12:5];
     
-    initial begin 
-        rd = 0;
-        rd_count = 0;
-    end
-    
     always @(posedge SCLK) begin
+      if (!rst) begin
+        rd <= 0;
+        rd_count <= 0;
+      end else begin
         if ((d_rdy == 1) && (rd == 1)) begin
             rd <= 0;
         end
@@ -82,6 +81,7 @@ module ALS(
         else begin
             rd_count <= rd_count + 1;
         end
+      end
     end
      
 endmodule

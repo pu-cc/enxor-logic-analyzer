@@ -37,6 +37,7 @@
 
 module uart #(parameter CLKS_PER_BIT = 87)(
 input i_sys_clk,
+input i_rst,
 input i_Rx_Serial,
 input i_Tx_DV,
 input [7:0] i_Tx_Byte,
@@ -48,6 +49,7 @@ output o_Tx_Done
     
     uart_rx #(.CLKS_PER_BIT(CLKS_PER_BIT)) URX (
         .i_sys_clk(i_sys_clk),
+        .i_rst(i_rst),
         .i_Rx_Serial(i_Rx_Serial),
         .o_Rx_DV(o_Rx_DV),
         .o_Rx_Byte(o_Rx_Byte)
@@ -55,6 +57,7 @@ output o_Tx_Done
     
     uart_tx #(.CLKS_PER_BIT(CLKS_PER_BIT)) UTX (
         .i_sys_clk(i_sys_clk),
+        .i_rst(i_rst),
         .i_Tx_DV(i_Tx_DV),
         .i_Tx_Byte(i_Tx_Byte),
         .o_Tx_Serial(o_Tx_Serial),

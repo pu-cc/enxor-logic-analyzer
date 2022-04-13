@@ -150,7 +150,7 @@ module FSM_Controller #(parameter DATA_WIDTH = 8, parameter PACKET_WIDTH = 16, p
                         end
                     SET_PRECAP_DEPTH:
                         begin
-                            o_precap_depth <= {o_precap_depth[7:0], paramByte};
+                            o_precap_depth <= {o_precap_depth[3:0], paramByte}; // 8+4
                         end
                     SET_CHANNEL: 
                         begin

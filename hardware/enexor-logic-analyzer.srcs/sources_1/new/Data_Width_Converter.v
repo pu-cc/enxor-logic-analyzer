@@ -52,7 +52,7 @@ module Data_Width_Converter #(parameter PACKET_WIDTH = 16) (
 
     localparam NUM_OF_BYTES = (PACKET_WIDTH / 8) + 1;
     
-    reg [$clog2(NUM_OF_BYTES)-1:0] byte;
+    reg [$clog2(NUM_OF_BYTES)-1:0] r_byte; // byte keyword illegal in systemverilog
     wire [2:0] packet_case = {i_post_read, i_buffer_full, i_triggered_state & ~i_start_read};
     reg [7:0] packet_header;
     wire [PACKET_WIDTH+8-1:0] data = {i_data, packet_header};
@@ -96,9 +96,9 @@ module Data_Width_Converter #(parameter PACKET_WIDTH = 16) (
         endcase
     end // END always
     
-    Mux #(.NUM_INPUTS(NUM_OF_BYTES)) mux (
+    Mux #(.NUM_INPUTS(NUM_OF_BYTES), .MUX_WIDTH(PACKET_WIDTH+8)) mux (
         .i_data(data),
-        .i_sel(byte),
+        .i_sel(r_byte),
         .o_data(o_tx_byte)
     );
     
@@ -116,7 +116,7 @@ module Data_Width_Converter #(parameter PACKET_WIDTH = 16) (
                     else begin
                         o_tx_DV <= 0;
                         o_r_ack <= 0;
-                        byte <= 0;
+                        r_byte <= 0;
                     end
                 end
                 TRIG: begin
@@ -147,12 +147,12 @@ module Data_Width_Converter #(parameter PACKET_WIDTH = 16) (
                     end
                 end
                 INCR: begin
-                    if (byte == (PACKET_WIDTH/8)) begin
+                    if (r_byte == (PACKET_WIDTH/8)) begin
                         o_r_ack <= 1;
                         r_state <= ACK;
                     end
                     else begin
-                        byte <= byte + 1;
+                        r_byte <= r_byte + 1;
                         r_state <= SEND;
                     end
                 end
@@ -169,7 +169,7 @@ module Data_Width_Converter #(parameter PACKET_WIDTH = 16) (
                     else begin
                         o_tx_DV <= 0;
                         o_r_ack <= 0;
-                        byte <= 0;
+                        r_byte <= 0;
                     end
                 end
             endcase

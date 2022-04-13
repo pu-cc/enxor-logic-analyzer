@@ -13,6 +13,7 @@
   
 module uart_rx #(parameter CLKS_PER_BIT = 87) (
    input        i_sys_clk,
+   input        i_rst,
    input        i_Rx_Serial,
    output       o_Rx_DV,
    output [7:0] o_Rx_Byte
@@ -24,28 +25,40 @@ module uart_rx #(parameter CLKS_PER_BIT = 87) (
   localparam s_RX_STOP_BIT  = 3'b011;
   localparam s_CLEANUP      = 3'b100;
    
-  reg           r_Rx_Data_R = 1'b1;
-  reg           r_Rx_Data   = 1'b1;
+  reg           r_Rx_Data_R;
+  reg           r_Rx_Data;
    
-  reg [9:0]     r_Clock_Count = 0;
-  reg [2:0]     r_Bit_Index   = 0; //8 bits total
-  reg [7:0]     r_Rx_Byte     = 0;
-  reg           r_Rx_DV       = 0;
-  reg [2:0]     r_SM_Main     = 0;
+  reg [9:0]     r_Clock_Count;
+  reg [2:0]     r_Bit_Index; //8 bits total
+  reg [7:0]     r_Rx_Byte;
+  reg           r_Rx_DV;
+  reg [2:0]     r_SM_Main;
    
   // Purpose: Double-register the incoming data.
   // This allows it to be used in the UART RX Clock Domain.
   // (It removes problems caused by metastability)
   always @(posedge i_sys_clk)
     begin
-      r_Rx_Data_R <= i_Rx_Serial;
-      r_Rx_Data   <= r_Rx_Data_R;
+      if (!i_rst) begin
+        r_Rx_Data_R <= 1'b1;
+        r_Rx_Data <= 1'b1;
+      end else begin
+        r_Rx_Data_R <= i_Rx_Serial;
+        r_Rx_Data   <= r_Rx_Data_R;
+      end
     end
    
    
   // Purpose: Control RX state machine
   always @(posedge i_sys_clk)
     begin
+      if (!i_rst) begin
+        r_Clock_Count <= 0;
+        r_Bit_Index <= 0; //8 bits total
+        r_Rx_Byte <= 0;
+        r_Rx_DV <= 0;
+        r_SM_Main <= 0;
+      end else begin
        
       case (r_SM_Main)
         s_IDLE :
@@ -139,6 +152,8 @@ module uart_rx #(parameter CLKS_PER_BIT = 87) (
           r_SM_Main <= s_IDLE;
          
       endcase
+
+      end
     end   
    
   assign o_Rx_DV   = r_Rx_DV;

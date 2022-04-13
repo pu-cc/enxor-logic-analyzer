@@ -34,9 +34,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+`define USE_PLL
 
-module Logic_Analyzer_Top #(parameter DATA_WIDTH = 8, parameter MEM_DEPTH = 8192)(
-    input i_sys_clk,
+module Logic_Analyzer_Top #(parameter DATA_WIDTH = 8, parameter MEM_DEPTH = 4096)(
+    input i_ref_clk,
     input i_rstn,
     input [DATA_WIDTH-1:0] i_raw_sig,
     input i_rx,
@@ -56,8 +57,30 @@ module Logic_Analyzer_Top #(parameter DATA_WIDTH = 8, parameter MEM_DEPTH = 8192
     wire w_sample_clk_posedge, w_triggered_state, w_rollover, w_event, w_trig_pulse, w_rstn, w_buffer_full, w_finished_read, w_trigger_type;
     wire w_r_ack, w_enable, w_start_read, w_t_rdy, w_tx_DV, w_rx_DV, w_tx_done, w_post_read, w_stop, trigger_delay_en;
     
-    assign o_triggered_led = w_triggered_state;
-    assign o_enabled = w_enable;
+    assign o_triggered_led = ~w_triggered_state;
+    assign o_enabled = ~w_enable;
+
+    wire i_sys_clk, i_ref_clk;
+
+`ifdef USE_PLL
+    wire clk270, clk180, clk90, clk0, usr_ref_out;
+    wire usr_pll_lock_stdy, usr_pll_lock;
+
+    CC_PLL #(
+        .REF_CLK("10.0"),    // 10 MHz reference input
+        .OUT_CLK("50.0"),    // 100 MHz PLL output
+        .PERF_MD("ECONOMY"), // LOWPOWER, ECONOMY, SPEED
+        .LOW_JITTER(1),      // 0: disable, 1: enable low jitter mode
+        .CI_FILTER_CONST(2), // optional CI filter constant
+        .CP_FILTER_CONST(4)  // optional CP filter constant
+    ) pll_inst (
+        .CLK_REF(i_ref_clk), .CLK_FEEDBACK(1'b0), .USR_CLK_REF(1'b0),
+        .USR_LOCKED_STDY_RST(1'b0), .USR_PLL_LOCKED_STDY(usr_pll_lock_stdy), .USR_PLL_LOCKED(usr_pll_lock),
+        .CLK270(clk270), .CLK180(clk180), .CLK90(clk90), .CLK0(i_sys_clk), .CLK_REF_OUT(usr_ref_out)
+    );
+`else
+    assign i_sys_clk = i_ref_clk;
+`endif
     
     Reset_Sync RST(
         .i_sys_clk(i_sys_clk),
@@ -144,8 +167,9 @@ module Logic_Analyzer_Top #(parameter DATA_WIDTH = 8, parameter MEM_DEPTH = 8192
         .o_tx_byte(w_tx_byte)
     );
     
-    uart #(.CLKS_PER_BIT(868)) USB (
+    uart #(.CLKS_PER_BIT(434)) USB ( // 50M / 115200 = 434
         .i_sys_clk(i_sys_clk),
+        .i_rst(w_rstn),
         .i_Rx_Serial(i_rx),
         .i_Tx_DV(w_tx_DV),
         .i_Tx_Byte(w_tx_byte),
